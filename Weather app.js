@@ -1,13 +1,24 @@
+// all the modules are required here.
 const express = require ("express");
-const { json } = require("express/lib/response");
 const https = require ("https");
+const bodyparser= require ("body-parser");
 
 
+// app requests and resposnes goes here.
 const app = express();
-
+app.use(bodyparser.urlencoded({extended: true}))
 app.get("/", function (req, res){
+
+
+    res.sendFile(__dirname + "/index.html")
+    app.post ("/", function(req, res){
+         
+    const query = req.body.city;
+    const apikey = "06a3706f6694764c546fda4cc333c2c5";
+    const unit = "metric";
+
     
-    const url = "https://api.openweathermap.org/data/2.5/weather?q=Noida&appid=06a3706f6694764c546fda4cc333c2c5&units=metric"
+    const url = "https://api.openweathermap.org/data/2.5/weather?q="+ query +"&appid="+ apikey +"&units=" +unit;
     https.get(url, function(resposne){
            
         resposne.on("data", function(data){
@@ -20,16 +31,15 @@ app.get("/", function (req, res){
             console.log("the current weather in noida is " + description);
             console.log(temp);
             
-            res.write(" <p> the current weather is "  + description + "</p>" );
-            res.write(" <h1> the temprature in noida is " + temp + " degree celcius. </h>");
+            res.write("<h1> The current weather in "+ query + " is "  + description + "</h1>");
+            res.write(" <h3> and temprature in "+ query +" is " + temp + " degree celcius. </h3>");
             res.write("<img src=" + imageURL + ">");
 
             res.send();
         })
-
+      })
     })
-
-});
+ });
 
 // Server commnad here the server is running.
 
